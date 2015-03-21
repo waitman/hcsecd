@@ -307,9 +307,9 @@ send_pin_code_reply(int sock, struct sockaddr_hci *addr,
 		    sfifo[strlen(sfifo)-1] = '\0';
 		    	    
 		    strncpy(newpin,sfifo,bytes);
-		    syslog(LOG_DEBUG,"%s pin",newpin);
-		    syslog(LOG_DEBUG,"%lu pinlen",strlen(newpin));
-		    syslog(LOG_DEBUG,"%d bytes",bytes);
+		    //syslog(LOG_DEBUG,"%s pin",newpin);
+		    //syslog(LOG_DEBUG,"%lu pinlen",strlen(newpin));
+		    //syslog(LOG_DEBUG,"%d bytes",bytes);
 		    remove(FIFO_NAME);
 		} 
 		  ng_hci_pin_code_rep_cp	*cp = NULL;
