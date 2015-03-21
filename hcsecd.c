@@ -322,7 +322,7 @@ send_pin_code_reply(int sock, struct sockaddr_hci *addr,
 		  strncpy(cp->pin, newpin, strlen(newpin));
 		  cp->pin_size = strlen((char const *) cp->pin);
 		  
-		  syslog(LOG_DEBUG,"%s pincode entered",cp->pin);
+		  //syslog(LOG_DEBUG,"%s pincode entered",cp->pin);
 		  syslog(LOG_DEBUG, "Sending PIN_Code_Reply to '%s' " \
 				"for remote bdaddr %s",
 				addr->hci_node, bt_ntoa(bdaddr, NULL));
