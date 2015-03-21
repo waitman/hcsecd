@@ -1,6 +1,7 @@
 /*
  * hcsecd.c
  *
+ * Modified by Waitman Gobble <ns@waitman.net> based on :
  * Copyright (c) 2001-2002 Maksim Yevmenkin <m_evmenkin@yahoo.com>
  * All rights reserved.
  *
