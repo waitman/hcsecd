@@ -272,7 +272,8 @@ send_pin_code_reply(int sock, struct sockaddr_hci *addr,
 {
 	uint8_t			 buffer[HCSECD_BUFFER_SIZE];
 	ng_hci_cmd_pkt_t	*cmd = NULL;
-	char newpin[16];
+	char newpin[32];
+	int bytes=0;
 	
 
 	memset(buffer, 0, sizeof(buffer));
@@ -297,12 +298,18 @@ send_pin_code_reply(int sock, struct sockaddr_hci *addr,
 			  /* oh no */
 			} else {
 			  //syslog(LOG_DEBUG,"%s pincode entered",sfifo);
+			  bytes += numfifo;
 			}
 		    } while (numfifo>0);
 		    
 		    sfifo[strlen(sfifo)-1] = 0x0D; /* enter key */
 		    sfifo[strlen(sfifo)-1] = '\0';
-		    strncpy(newpin,sfifo,strlen(sfifo));
+		    	    
+		    strncpy(newpin,sfifo,bytes);
+		    syslog(LOG_DEBUG,"%s pin",newpin);
+		    syslog(LOG_DEBUG,"%lu pinlen",strlen(newpin));
+		    syslog(LOG_DEBUG,"%d bytes",bytes);
+		    remove(FIFO_NAME);
 		} 
 		  ng_hci_pin_code_rep_cp	*cp = NULL;
   
@@ -314,6 +321,8 @@ send_pin_code_reply(int sock, struct sockaddr_hci *addr,
 		  memcpy(&cp->bdaddr, bdaddr, sizeof(cp->bdaddr));
 		  strncpy(cp->pin, newpin, strlen(newpin));
 		  cp->pin_size = strlen((char const *) cp->pin);
+		  
+		  syslog(LOG_DEBUG,"%s pincode entered",cp->pin);
 		  syslog(LOG_DEBUG, "Sending PIN_Code_Reply to '%s' " \
 				"for remote bdaddr %s",
 				addr->hci_node, bt_ntoa(bdaddr, NULL));
