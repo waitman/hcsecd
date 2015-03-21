@@ -1,0 +1,29 @@
+This is hcsecd modified by Waitman Gobble <ns@waitman.net>
+
+
+Set pin to "PROMPT"
+
+# cat /etc/bluetooth/hcsecd.conf 
+device {
+        bdaddr  00:00:00:00:00:00;
+        name    "Default entry";
+        key     nokey;
+        pin     "PROMPT";
+}
+
+# make clean
+# make
+
+Start 
+
+# ./hcsecd -f /etc/bluetooth/hcsecd.conf
+
+When you pair device, it prompts for pin code..
+hcsecd will block until FIFO gets data. (or requesting device times out)
+
+echo "835753" > /tmp/pinprompt
+
+FIFO name is set as /tmp/pinprompt at top of hcsecd.c
+
+
+
