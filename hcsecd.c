@@ -300,7 +300,7 @@ send_pin_code_reply(int sock, struct sockaddr_hci *addr,
 			} else {
 			  //syslog(LOG_DEBUG,"%s pincode entered",sfifo);
 			  bytes += numfifo;
-			  if (bytes>16) {
+			  if (bytes>32) {
 			     syslog(LOG_ERR,"Buffer Overflow");
 			     close(fdfifo);
 			     remove(FIFO_NAME);
