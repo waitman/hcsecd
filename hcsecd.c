@@ -273,7 +273,7 @@ send_pin_code_reply(int sock, struct sockaddr_hci *addr,
 {
 	uint8_t			 buffer[HCSECD_BUFFER_SIZE];
 	ng_hci_cmd_pkt_t	*cmd = NULL;
-	char newpin[32];
+	char newpin[40];
 	int bytes=0;
 	
 
@@ -300,6 +300,12 @@ send_pin_code_reply(int sock, struct sockaddr_hci *addr,
 			} else {
 			  //syslog(LOG_DEBUG,"%s pincode entered",sfifo);
 			  bytes += numfifo;
+			  if (bytes>16) {
+			     syslog(LOG_ERR,"Buffer Overflow");
+			     close(fdfifo);
+			     remove(FIFO_NAME);
+			     return(-1);
+			  }
 			}
 		    } while (numfifo>0);
 		    
@@ -310,6 +316,7 @@ send_pin_code_reply(int sock, struct sockaddr_hci *addr,
 		    //syslog(LOG_DEBUG,"%s pin",newpin);
 		    //syslog(LOG_DEBUG,"%lu pinlen",strlen(newpin));
 		    //syslog(LOG_DEBUG,"%d bytes",bytes);
+		    close(fdfifo);
 		    remove(FIFO_NAME);
 		} 
 		  ng_hci_pin_code_rep_cp	*cp = NULL;
