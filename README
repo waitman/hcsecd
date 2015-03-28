@@ -1,5 +1,15 @@
 This is hcsecd modified by Waitman Gobble <ns@waitman.net>
 
+It supports two additional pin modes besides specifying the pin in the configuration file.
+"PROMPT" mode and "BRIG" mode.
+
+
+1. PROMPT pin mode
+
+PROMPT mode is useful if the connecting client generates a random pin code which must be 
+entered on the server. For example, if you have an HID device. GNU/Linux,Android and Mac OS X
+clients require this mode. MS Windows clients may be set to this mode manually using the 
+"Generate PIN code" option while pairing the client.
 
 Set pin to "PROMPT"
 
@@ -11,19 +21,52 @@ device {
         pin     "PROMPT";
 }
 
-# make clean
-# make
-
-Start 
-
-# ./hcsecd -f /etc/bluetooth/hcsecd.conf
-
 When you pair device, it prompts for pin code..
 hcsecd will block until FIFO gets data. (or requesting device times out)
 
 echo "835753" > /tmp/pinprompt
 
 FIFO name is set as /tmp/pinprompt at top of hcsecd.c
+
+
+
+2. BRIG pin mode
+
+BRIG mode is useful if you wish to identify the BDADDR with specific identity records,
+for example, a phone number. When using BRIG mode, set the pin key in the file /tmp/brig.txt.
+Note that the file will be deleted once it has been used.
+
+BRIG mode example:
+
+device {
+        bdaddr  00:00:00:00:00:00;
+        name    "Default entry"; 
+        key     nokey;
+        pin     "BRIG";
+}
+
+# printf "5108307975" > /tmp/brig.txt
+
+In the debug log:
+
+Mar 28 08:38:39 afia hcsecd[61760]: Sending PIN_Code_Reply '5108307975' to 'ubt1hci' 
+ for remote bdaddr bc:44:86:13:0f:ff
+
+
+
+3. Building the software
+
+To build:
+
+# make clean
+# make
+
+
+4. Running the software
+
+Start 
+
+# ./hcsecd -f /etc/bluetooth/hcsecd.conf
 
 
 

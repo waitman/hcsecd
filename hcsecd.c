@@ -284,9 +284,10 @@ send_pin_code_reply(int sock, struct sockaddr_hci *addr,
 
 	if (pin != NULL) {
 		
-		/* if pin set to PROMPT in config then open FIFO and block until pin shows up */
+		
 		strncpy(newpin,pin,strlen(pin));
 		
+		/* if pin set to PROMPT in config then open FIFO and block until pin shows up */
 		if (strcmp("PROMPT",pin)==0)
 		{
 		    char sfifo[300];
@@ -319,6 +320,23 @@ send_pin_code_reply(int sock, struct sockaddr_hci *addr,
 		    close(fdfifo);
 		    remove(FIFO_NAME);
 		} 
+		/* read pin from text file */
+		if (strcmp("BRIG",pin)==0)
+		{
+			FILE *fp = fopen("/tmp/brig.txt","r");
+			if (fp != NULL)
+			{
+				size_t len = fread(newpin, sizeof(char), 24, fp);
+				if (len>0)
+				{
+					newpin[len] = '\0';
+				}
+				fclose(fp);
+				
+				/* remove to avoid re-use */
+				remove("/tmp/brig.txt");
+			}
+		}
 		  ng_hci_pin_code_rep_cp	*cp = NULL;
   
 		  cmd->opcode = htole16(NG_HCI_OPCODE(NG_HCI_OGF_LINK_CONTROL,
@@ -331,8 +349,8 @@ send_pin_code_reply(int sock, struct sockaddr_hci *addr,
 		  cp->pin_size = strlen((char const *) cp->pin);
 		  
 		  //syslog(LOG_DEBUG,"%s pincode entered",cp->pin);
-		  syslog(LOG_DEBUG, "Sending PIN_Code_Reply to '%s' " \
-				"for remote bdaddr %s",
+		  syslog(LOG_DEBUG, "Sending PIN_Code_Reply '%s' to '%s' " \
+				"for remote bdaddr %s", cp->pin,
 				addr->hci_node, bt_ntoa(bdaddr, NULL));
 		
 	} else {
